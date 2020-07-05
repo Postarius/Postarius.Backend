@@ -48,7 +48,8 @@ namespace Web.Common.Controllers
             {
                 u.Password,
                 u.Login,
-                u.Id
+                u.Id,
+                u.DisplayName
             });
 
             if (userInfo is null || PasswordHashingService.Hash(model.Password) != userInfo.Password)
@@ -62,7 +63,7 @@ namespace Web.Common.Controllers
             }, DateTime.UtcNow.AddMinutes(30));
 
             Logger.LogInformation($"User got {token} token.");
-            return Ok(new { Token = token, model.ReturnUrl });
+            return Ok(new { Token = token, model.ReturnUrl, userInfo.Login, userInfo.DisplayName, userInfo.Id });
         }
 
         [HttpGet("Check"), Authorize]

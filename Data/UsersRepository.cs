@@ -12,6 +12,8 @@ namespace Data
         IQueryable<User> Search(ListSearchParams searchParams);
         IEnumerable<User> GetFollowersByUserId(int userId);
         IEnumerable<User> GetFollowedByUserId(int userId);
+        User GetByEmail(string email, bool throwIfNotFound = false);
+        User GetByLogin(string login, bool throwIfNotFound = false);
     }
     
     public class UsersRepository : EntityRepositoryBase<User>, IUsersRepository
@@ -34,6 +36,16 @@ namespace Data
         public IEnumerable<User> GetFollowedByUserId(int userId)
         {
             return GetById(userId, u => u.Followings.Select(f => f.Followed));
+        }
+
+        public User GetByEmail(string email, bool throwIfNotFound = false)
+        {
+            return throwIfNotFound ? First(u => u.Email == email) : FirstOrDefault(u => u.Email == email);
+        }
+
+        public User GetByLogin(string login, bool throwIfNotFound = false)
+        {
+            return throwIfNotFound ? First(u => u.Login == login) : FirstOrDefault(u => u.Login == login);
         }
     }
 

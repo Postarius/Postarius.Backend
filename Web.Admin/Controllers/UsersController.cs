@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Data;
+using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -51,6 +52,27 @@ namespace Web.Admin.Controllers
             UnitOfWork.Commit();
 
             return NoContent();
+        }
+
+        [HttpPost("Create")]
+        public ActionResult CreateUser(CreateModel model)
+        {
+            if (UsersRepository.Any(u => u.Email == model.Email || u.Login == model.Login))
+                return BadRequest("User with this email or login already exists");
+            
+            var user = new User
+            {
+                Login = model.Login,
+                Email = model.Email,
+                AvatarUrl = model.AvatarUrl,
+                DisplayName = model.DisplayName,
+                Password = model.Password
+            };
+            
+            UserService.Save(user);
+            UnitOfWork.Commit();
+
+            return Ok();
         }
     }
 }
